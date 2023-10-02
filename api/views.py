@@ -21,7 +21,15 @@ def add_book(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def book(request, pk):
+    book = Book.objects.get(id=pk)
     if request.method == 'GET':
-        book = Book.objects.get(id=pk)
         serializer = BookSerializer(book)
         return Response(serializer.data)
+    if request.method == 'PUT':
+        serializer = BookSerializer(book)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return serializer.errors
+        
